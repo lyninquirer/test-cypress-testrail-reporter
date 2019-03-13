@@ -25,6 +25,7 @@ var TestRail = /** @class */ (function () {
             }),
         })
             .then(function (response) {
+            console.log('Creating test run... ---> run id is:  ', response.data.id);
             _this.runId = response.data.id;
         })
             .catch(function (error) { return console.error(error); });
@@ -42,6 +43,13 @@ var TestRail = /** @class */ (function () {
     };
     TestRail.prototype.publishResults = function (results) {
         var _this = this;
+        if (this.options.createTestRun == "false") {
+            this.runId = this.options.runId;
+        }
+        if (typeof this.runId === "undefined") {
+            console.error("runId is undefined.");
+            return;
+        }
         axios({
             method: 'post',
             url: this.base + "/add_results_for_cases/" + this.runId,
