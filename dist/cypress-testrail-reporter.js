@@ -28,6 +28,10 @@ var CypressTestRailReporter = /** @class */ (function (_super) {
         _this.validate(reporterOptions, 'password');
         _this.validate(reporterOptions, 'projectId');
         _this.validate(reporterOptions, 'createTestRun');
+        var event = reporterOptions.event || testrail_interface_1.Emitted_Events.EVENT_RUN_END;
+        if (!Object.values(testrail_interface_1.Emitted_Events).includes(event)) {
+            throw new Error('Value of emitted event is not correct in cypress.json');
+        }
         runner.on('start', function () {
             var executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
             var name = (reporterOptions.runName || 'Automated test run') + " " + executionDateTime;
@@ -53,18 +57,20 @@ var CypressTestRailReporter = /** @class */ (function (_super) {
         runner.on('fail', function (test) {
             var _a;
             var caseIds = shared_1.titleToCaseIds(test.title);
+            var defectID = shared_1.titleToDefectId(test.title);
             if (caseIds.length > 0) {
                 var results = caseIds.map(function (caseId) {
                     return {
                         case_id: caseId,
                         status_id: testrail_interface_1.Status.Failed,
                         comment: "" + test.err.message,
+                        defects: defectID
                     };
                 });
                 (_a = _this.results).push.apply(_a, results);
             }
         });
-        runner.on('end', function () {
+        runner.on(event, function () {
             if (_this.results.length == 0) {
                 console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
                 console.warn('\n', 'No testcases were matched. Ensure that your tests are declared correctly and matches Cxxx', '\n');
@@ -72,6 +78,7 @@ var CypressTestRailReporter = /** @class */ (function (_super) {
                 return;
             }
             _this.testRail.publishResults(_this.results);
+            _this.results = [];
         });
         return _this;
     }

@@ -67,11 +67,13 @@ var TestRail = /** @class */ (function () {
                 password: this.options.password,
             },
             data: JSON.stringify({ results: results }),
-        }).then(function (response) {
+        })
+            .then(function (response) {
             _this.res = response;
-        }).catch(function (error) { return console.error(error); });
+        })
+            .catch(function (error) { return console.error(error); });
         this.waitResponse(20000);
-        if (this.res.status == 200) {
+        if (this.res !== undefined && this.res.status == 200) {
             console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
             console.log('\n', " - Results are published to " + chalk.magenta("https://" + this.options.domain + "/index.php?/runs/view/" + this.runId), '\n');
         }

@@ -2,7 +2,7 @@
 
 [![version](https://img.shields.io/npm/v/hanoi-cypress-testrail-reporter.svg)](https://www.npmjs.com/package/hanoi-cypress-testrail-reporter)
 [![downloads](https://img.shields.io/npm/dt/hanoi-cypress-testrail-reporter.svg)](https://www.npmjs.com/package/hanoi-cypress-testrail-reporter)
-[![MIT License](https://img.shields.io/github/license/Vivify-Ideas/cypress-testrail-reporter.svg)](https://github.com/Vivify-Ideas/cypress-testrail-reporter/blob/master/LICENSE.md)
+[![MIT License](https://img.shields.io/github/license/vietnq254/hanoi-cypress-testrail-reporter.svg)](https://github.com/vietnq254/hanoi-cypress-testrail-reporter/blob/master/LICENSE.md)
 
 Publishes [Cypress](https://www.cypress.io/) runs on TestRail.
 
@@ -26,7 +26,8 @@ Add reporter to your `cypress.json`:
   "projectId": idNumber,
   "createTestRun": "boolean",
   "suiteId": suiteNumber,
-  "runId": testRunNumber
+  "runId": testRunNumber,
+  "event": "suite end"
 }
 ```
 
@@ -40,6 +41,13 @@ it("Can authenticate a valid user C321", ...
 // Bad:
 it("C123Can authenticate a valid user", ...
 it("Can authenticate a valid userC123", ...
+```
+
+How to add defect ID for specific test:
+
+```Javascript
+// title contains pattern 'cypress-defect=<defect_id>':
+it("C123 C124 Can authenticate a valid user cypress-defect=NCT-1234", ...
 ```
 
 ## Reporter Options
@@ -57,6 +65,8 @@ it("Can authenticate a valid userC123", ...
 **suiteId**: _number_ (optional: required when TestRail project uses multiple test suites to manage cases) suite with which the tests are associated.
 
 **runId**: _number_ (optional: required when **createTestRun** = **false**) Test Run id.
+
+**event**: _string_ (optional: default value is **'end'**) emitted event to report result. There are 3 options: 'test end', 'suite end', 'end'.
 
 ## TestRail Settings
 

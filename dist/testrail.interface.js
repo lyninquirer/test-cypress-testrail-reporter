@@ -8,4 +8,19 @@ var Status;
     Status[Status["Retest"] = 4] = "Retest";
     Status[Status["Failed"] = 5] = "Failed";
 })(Status = exports.Status || (exports.Status = {}));
+var Emitted_Events;
+(function (Emitted_Events) {
+    /**
+     * Emitted when {@link Test} execution ends
+     */
+    Emitted_Events["EVENT_TEST_END"] = "test end";
+    /**
+     * Emitted when Suite execution ends
+     */
+    Emitted_Events["EVENT_SUITE_END"] = "suite end";
+    /**
+     * Emitted when Root Suite execution ends
+     */
+    Emitted_Events["EVENT_RUN_END"] = "end";
+})(Emitted_Events = exports.Emitted_Events || (exports.Emitted_Events = {}));
 //# sourceMappingURL=testrail.interface.js.map
