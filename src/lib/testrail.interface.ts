@@ -22,3 +22,19 @@ export interface TestRailResult {
   status_id: Status;
   comment?: String;
 }
+
+export enum Emitted_Events {
+  /**
+   * Emitted when {@link Test} execution ends
+   */
+  EVENT_TEST_END = 'test end',
+  /**
+   * Emitted when Suite execution ends
+   */
+  EVENT_SUITE_END = 'suite end',
+  /**
+   * Emitted when Root Suite execution ends
+   */
+  EVENT_RUN_END = 'end',
+
+}

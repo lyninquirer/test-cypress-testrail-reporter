@@ -2,7 +2,7 @@ import { reporters } from 'mocha';
 import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { titleToCaseIds } from './shared';
-import { Status, TestRailResult } from './testrail.interface';
+import { Status, TestRailResult, Emitted_Events } from './testrail.interface';
 const chalk = require('chalk');
 
 export class CypressTestRailReporter extends reporters.Spec {
@@ -19,6 +19,10 @@ export class CypressTestRailReporter extends reporters.Spec {
     this.validate(reporterOptions, 'password');
     this.validate(reporterOptions, 'projectId');
     this.validate(reporterOptions, 'createTestRun');
+    let event = reporterOptions.event || Emitted_Events.EVENT_RUN_END;
+    if (!Object.values(Emitted_Events).includes(event)) {
+      throw new Error('Value of emitted event is not correct in cypress.json');
+    }
 
     runner.on('start', () => {
       const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
@@ -58,7 +62,7 @@ export class CypressTestRailReporter extends reporters.Spec {
       }
     });
 
-    runner.on('end', () => {
+    runner.on(event, () => {
       if (this.results.length == 0) {
         console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
         console.warn(
@@ -72,6 +76,7 @@ export class CypressTestRailReporter extends reporters.Spec {
       }
 
       this.testRail.publishResults(this.results);
+      this.results = []
     });
   }
 
