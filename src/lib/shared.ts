@@ -14,3 +14,17 @@ export function titleToCaseIds(title: string): number[] {
     }
     return caseIds;
 }
+
+/**
+ * Search for defect
+ * @param title: contains pattern 'cypress-defect=<Defect_id>', i.e 'cypress-defect=NCT-1234'
+ * @returns {any}
+ */
+export function titleToDefectId(title: string): string {
+    let testCaseIdRegExp: RegExp = /(cypress-defect=)(\w+-\d+)/gm;
+    let m = testCaseIdRegExp.exec(title);
+    if (m !== null && m.length > 2) {
+        return m[2];
+    }
+    return undefined;
+}

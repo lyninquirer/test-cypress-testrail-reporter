@@ -1,7 +1,7 @@
 import { reporters } from 'mocha';
 import * as moment from 'moment';
 import { TestRail } from './testrail';
-import { titleToCaseIds } from './shared';
+import { titleToCaseIds, titleToDefectId } from './shared';
 import { Status, TestRailResult, Emitted_Events } from './testrail.interface';
 const chalk = require('chalk');
 
@@ -50,12 +50,14 @@ export class CypressTestRailReporter extends reporters.Spec {
 
         runner.on('fail', test => {
             const caseIds = titleToCaseIds(test.title);
+            const defectID = titleToDefectId(test.title);
             if (caseIds.length > 0) {
                 const results = caseIds.map(caseId => {
                     return {
                         case_id: caseId,
                         status_id: Status.Failed,
                         comment: `${test.err.message}`,
+                        defects: defectID
                     };
                 });
                 this.results.push(...results);

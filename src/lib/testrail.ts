@@ -82,7 +82,7 @@ export class TestRail {
             .catch(error => console.error(error));
 
         this.waitResponse(20000)
-        if (this.res.status == 200) {
+        if (this.res !== undefined && this.res.status == 200) {
             console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
             console.log('\n', " - Results are published to " + chalk.magenta("https://" + this.options.domain + "/index.php?/runs/view/" + this.runId), '\n');
         }
