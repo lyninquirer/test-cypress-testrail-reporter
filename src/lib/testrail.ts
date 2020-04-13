@@ -4,6 +4,7 @@ const deasync = require('deasync');
 import { TestRailOptions, TestRailResult } from './testrail.interface';
 
 export class TestRail {
+    public caseIDs: Number[];
     private base: String;
     private runId: Number;
     private res;
@@ -11,6 +12,7 @@ export class TestRail {
     constructor(private options: TestRailOptions) {
         this.base = `https://${options.domain}/index.php?/api/v2`;
         this.res = undefined;
+        this.caseIDs = [];
     }
 
     public createRun(name: string, description: string) {
@@ -34,6 +36,7 @@ export class TestRail {
                 this.runId = response.data.id;
             })
             .catch(error => console.error(error));
+        this.waitUntilNotNull("runId", 20000);
     }
 
     public deleteRun() {
@@ -48,10 +51,11 @@ export class TestRail {
         }).catch(error => console.error(error));
     }
 
-    private waitResponse(delay) {
-        if (typeof this.res === "undefined" && delay > 0) {
-            deasync.sleep(1000)
-            this.waitResponse(delay - 1000)
+    public waitUntilNotNull(property, delay) {
+        let value = Reflect.get(this, property);
+        if ((typeof value === "undefined" || (value instanceof Array && value.length !== 0)) && delay > 0) {
+            deasync.sleep(1000);
+            this.waitUntilNotNull(property, delay - 1000);
         }
     }
 
@@ -81,10 +85,36 @@ export class TestRail {
             })
             .catch(error => console.error(error));
 
-        this.waitResponse(20000)
+        this.waitUntilNotNull("res", 20000);
         if (this.res !== undefined && this.res.status == 200) {
             console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
             console.log('\n', " - Results are published to " + chalk.magenta("https://" + this.options.domain + "/index.php?/runs/view/" + this.runId), '\n');
         }
+    }
+
+    public getCaseIds() {
+        if (this.options.createTestRun == "false") {
+            this.runId = this.options.runId;
+        }
+
+        if (typeof this.runId === "undefined") {
+            console.error("runId is undefined.")
+            return
+        }
+        axios({
+            method: 'get',
+            url: `${this.base}/get_tests/${this.runId}`,
+            headers: { 'Content-Type': 'application/json' },
+            auth: {
+                username: this.options.username,
+                password: this.options.password,
+            },
+        })
+            .then(response => {
+                response.data.forEach(item => {
+                    this.caseIDs.push(item.case_id);
+                });
+            })
+            .catch(error => console.error(error));
     }
 }
