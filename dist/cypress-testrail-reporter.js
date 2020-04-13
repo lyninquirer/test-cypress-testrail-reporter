@@ -15,6 +15,7 @@ var moment = require("moment");
 var testrail_1 = require("./testrail");
 var shared_1 = require("./shared");
 var testrail_interface_1 = require("./testrail.interface");
+var deasync = require('deasync');
 var chalk = require('chalk');
 var CypressTestRailReporter = /** @class */ (function (_super) {
     __extends(CypressTestRailReporter, _super);
@@ -39,17 +40,32 @@ var CypressTestRailReporter = /** @class */ (function (_super) {
             if (reporterOptions.createTestRun == "true") {
                 _this.testRail.createRun(name, description);
             }
+            if (event == testrail_interface_1.Emitted_Events.EVENT_SUITE_END || event == testrail_interface_1.Emitted_Events.EVENT_RUN_END) {
+                // Only in event 'suite end' or 'end', we will verify the test case IDs
+                _this.testRail.getCaseIds();
+            }
         });
         runner.on('pass', function (test) {
             var _a;
             var caseIds = shared_1.titleToCaseIds(test.title);
-            if (caseIds.length > 0) {
-                var results = caseIds.map(function (caseId) {
-                    return {
-                        case_id: caseId,
-                        status_id: testrail_interface_1.Status.Passed,
-                        comment: "Execution time: " + test.duration + "ms",
-                    };
+            if (event == testrail_interface_1.Emitted_Events.EVENT_SUITE_END || event == testrail_interface_1.Emitted_Events.EVENT_RUN_END) {
+                _this.waitForGetCases(20000);
+            }
+            var passedIds = [];
+            caseIds.forEach(function (id) {
+                if (_this.testRail.caseIDs.length == 0 || _this.testRail.caseIDs.includes(id)) {
+                    passedIds.push(id);
+                }
+            });
+            if (passedIds.length > 0) {
+                var results = passedIds.map(function (caseId) {
+                    if (_this.testRail.caseIDs.includes(caseId)) {
+                        return {
+                            case_id: caseId,
+                            status_id: testrail_interface_1.Status.Passed,
+                            comment: "Execution time: " + test.duration + "ms",
+                        };
+                    }
                 });
                 (_a = _this.results).push.apply(_a, results);
             }
@@ -58,12 +74,22 @@ var CypressTestRailReporter = /** @class */ (function (_super) {
             var _a;
             var caseIds = shared_1.titleToCaseIds(test.title);
             var defectID = shared_1.titleToDefectId(test.title);
-            if (caseIds.length > 0) {
-                var results = caseIds.map(function (caseId) {
+            var customComment = process.env.CUSTOM_COMMENT;
+            if (event == testrail_interface_1.Emitted_Events.EVENT_SUITE_END || event == testrail_interface_1.Emitted_Events.EVENT_RUN_END) {
+                _this.waitForGetCases(20000);
+            }
+            var failedIds = [];
+            caseIds.forEach(function (id) {
+                if (_this.testRail.caseIDs.length == 0 || _this.testRail.caseIDs.includes(id)) {
+                    failedIds.push(id);
+                }
+            });
+            if (failedIds.length > 0) {
+                var results = failedIds.map(function (caseId) {
                     return {
                         case_id: caseId,
                         status_id: testrail_interface_1.Status.Failed,
-                        comment: "" + test.err.message,
+                        comment: customComment ? customComment + "\n\n# Cypress result: #\n " + test.err.message : "# Cypress result: #\n" + test.err.message,
                         defects: defectID
                     };
                 });
@@ -74,7 +100,6 @@ var CypressTestRailReporter = /** @class */ (function (_super) {
             if (_this.results.length == 0) {
                 console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
                 console.warn('\n', 'No testcases were matched. Ensure that your tests are declared correctly and matches Cxxx', '\n');
-                _this.testRail.deleteRun();
                 return;
             }
             _this.testRail.publishResults(_this.results);
@@ -88,6 +113,12 @@ var CypressTestRailReporter = /** @class */ (function (_super) {
         }
         if (options[name] == null) {
             throw new Error("Missing " + name + " value. Please update reporterOptions in cypress.json");
+        }
+    };
+    CypressTestRailReporter.prototype.waitForGetCases = function (delay) {
+        if (this.testRail.caseIDs.length == 0 && delay > 0) {
+            deasync.sleep(1000);
+            this.waitForGetCases(delay - 1000);
         }
     };
     return CypressTestRailReporter;

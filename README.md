@@ -43,11 +43,24 @@ it("C123Can authenticate a valid user", ...
 it("Can authenticate a valid userC123", ...
 ```
 
-How to add defect ID for specific test:
+**How to add defect ID for specific test:**
 
 ```Javascript
 // title contains pattern 'cypress-defect=<defect_id>':
 it("C123 C124 Can authenticate a valid user cypress-defect=NCT-1234", ...
+```
+
+**Add custom comment via the environment variable:**
+```Javascript
+export CUSTOM_COMMENT="http://gitlab.company.com/group/project/-/jobs/188786/raw"
+```
+then in the result comment of failed test cases:
+```Javascript
+http://gitlab.company.com/group/project/-/jobs/188786/raw
+
+Cypress result:
+
+    <error_message>
 ```
 
 ## Reporter Options

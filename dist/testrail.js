@@ -8,6 +8,7 @@ var TestRail = /** @class */ (function () {
         this.options = options;
         this.base = "https://" + options.domain + "/index.php?/api/v2";
         this.res = undefined;
+        this.caseIDs = [];
     }
     TestRail.prototype.createRun = function (name, description) {
         var _this = this;
@@ -31,6 +32,7 @@ var TestRail = /** @class */ (function () {
             _this.runId = response.data.id;
         })
             .catch(function (error) { return console.error(error); });
+        this.waitUntilNotNull("runId", 20000);
     };
     TestRail.prototype.deleteRun = function () {
         axios({
@@ -43,10 +45,11 @@ var TestRail = /** @class */ (function () {
             },
         }).catch(function (error) { return console.error(error); });
     };
-    TestRail.prototype.waitResponse = function (delay) {
-        if (typeof this.res === "undefined" && delay > 0) {
+    TestRail.prototype.waitUntilNotNull = function (property, delay) {
+        var value = Reflect.get(this, property);
+        if ((typeof value === "undefined" || (value instanceof Array && value.length !== 0)) && delay > 0) {
             deasync.sleep(1000);
-            this.waitResponse(delay - 1000);
+            this.waitUntilNotNull(property, delay - 1000);
         }
     };
     TestRail.prototype.publishResults = function (results) {
@@ -72,11 +75,36 @@ var TestRail = /** @class */ (function () {
             _this.res = response;
         })
             .catch(function (error) { return console.error(error); });
-        this.waitResponse(20000);
+        this.waitUntilNotNull("res", 20000);
         if (this.res !== undefined && this.res.status == 200) {
             console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
             console.log('\n', " - Results are published to " + chalk.magenta("https://" + this.options.domain + "/index.php?/runs/view/" + this.runId), '\n');
         }
+    };
+    TestRail.prototype.getCaseIds = function () {
+        var _this = this;
+        if (this.options.createTestRun == "false") {
+            this.runId = this.options.runId;
+        }
+        if (typeof this.runId === "undefined") {
+            console.error("runId is undefined.");
+            return;
+        }
+        axios({
+            method: 'get',
+            url: this.base + "/get_tests/" + this.runId,
+            headers: { 'Content-Type': 'application/json' },
+            auth: {
+                username: this.options.username,
+                password: this.options.password,
+            },
+        })
+            .then(function (response) {
+            response.data.forEach(function (item) {
+                _this.caseIDs.push(item.case_id);
+            });
+        })
+            .catch(function (error) { return console.error(error); });
     };
     return TestRail;
 }());
