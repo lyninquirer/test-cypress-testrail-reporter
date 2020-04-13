@@ -51,12 +51,13 @@ export class CypressTestRailReporter extends reporters.Spec {
         runner.on('fail', test => {
             const caseIds = titleToCaseIds(test.title);
             const defectID = titleToDefectId(test.title);
+            const customComment = process.env.CUSTOM_COMMENT;
             if (caseIds.length > 0) {
                 const results = caseIds.map(caseId => {
                     return {
                         case_id: caseId,
                         status_id: Status.Failed,
-                        comment: `${test.err.message}`,
+                        comment: customComment ? `${customComment}\n\n# Cypress result: #\n ${test.err.message}` : `# Cypress result: #\n${test.err.message}`,
                         defects: defectID
                     };
                 });
