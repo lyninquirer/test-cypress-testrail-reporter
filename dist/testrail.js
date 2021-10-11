@@ -82,7 +82,6 @@ var TestRail = /** @class */ (function () {
         }
     };
     TestRail.prototype.getCaseIds = function () {
-        var _this = this;
         if (this.options.createTestRun == "false") {
             this.runId = this.options.runId;
         }
@@ -90,19 +89,30 @@ var TestRail = /** @class */ (function () {
             console.error("runId is undefined.");
             return;
         }
+        this.sendGets(0, 250);
+    };
+    TestRail.prototype.sendGets = function (offset, limit) {
+        var _this = this;
         axios({
             method: 'get',
-            url: this.base + "/get_tests/" + this.runId,
+            url: this.base + "/get_tests/" + this.runId + "&limit=" + limit + "&offset=" + offset,
             headers: { 'Content-Type': 'application/json' },
             auth: {
                 username: this.options.username,
                 password: this.options.password,
             },
-        })
-            .then(function (response) {
-            response.data.forEach(function (item) {
-                _this.caseIDs.push(item.case_id);
-            });
+        }).then(function (response) {
+            if (response.status === 429) { // Too Many Requests
+                var retryAfter = parseInt(response.headers.get('Retry-After') || '1') * 1000;
+                deasync.sleep(retryAfter);
+                _this.sendGets(offset, limit);
+            }
+            if (response.data.size !== 0) {
+                response.data.tests.forEach(function (item) {
+                    _this.caseIDs.push(item.case_id);
+                });
+                _this.sendGets(offset + limit, limit);
+            }
         })
             .catch(function (error) { return console.error(error); });
     };
