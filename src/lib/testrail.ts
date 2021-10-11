@@ -101,20 +101,32 @@ export class TestRail {
             console.error("runId is undefined.")
             return
         }
+
+        this.sendGets(0, 250);
+    }
+
+    private sendGets(offset, limit) {
         axios({
             method: 'get',
-            url: `${this.base}/get_tests/${this.runId}`,
+            url: `${this.base}/get_tests/${this.runId}&limit=${limit}&offset=${offset}`,
             headers: { 'Content-Type': 'application/json' },
             auth: {
                 username: this.options.username,
                 password: this.options.password,
             },
-        })
-            .then(response => {
-                response.data.forEach(item => {
+        }).then(response => {
+            if (response.status === 429) { // Too Many Requests
+                const retryAfter = parseInt(response.headers.get('Retry-After') || '1') * 1000;
+                deasync.sleep(retryAfter);
+                this.sendGets(offset, limit);
+            }
+            if (response.data.size !== 0) {
+                response.data.tests.forEach(item => {
                     this.caseIDs.push(item.case_id);
                 });
-            })
-            .catch(error => console.error(error));
+                this.sendGets(offset + limit, limit);
+            }
+        })
+        .catch(error => console.error(error));
     }
 }
