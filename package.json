@@ -1,6 +1,6 @@
 {
-  "name": "hanoi-cypress-testrail-reporter",
-  "version": "2.2.0",
+  "name": "cypress-testrail-reporter-qa",
+  "version": "2.2.2",
   "description": "A Testrail reporter for cypress including TestRail API basic library",
   "main": "index.js",
   "private": false,
@@ -9,11 +9,11 @@
     "testrail",
     "reporter"
   ],
-  "author": "NGUYEN Viet <vietnq254@live.com>",
+  "author": "Sarah",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vietnq254/hanoi-cypress-testrail-reporter.git"
+    "url": "git+https://github.com/sarahphamEnc/hanoi-cypress-testrail-reporter.git"
   },
   "scripts": {
     "tsc": "tsc",
@@ -38,8 +38,8 @@
     "rimraf": "^2.6.3",
     "typescript": "^2.9.2"
   },
-  "homepage": "https://github.com/vietnq254/hanoi-cypress-testrail-reporter#readme",
+  "homepage": "https://github.com/sarahphamEnc/hanoi-cypress-testrail-reporter#readme",
   "bugs": {
-    "url": "https://github.com/vietnq254/hanoi-cypress-testrail-reporter/issues"
+    "url": "https://github.com/sarahphamEnc/hanoi-cypress-testrail-reporter/issues"
   }
 }

@@ -63,6 +63,7 @@ var CypressTestRailReporter = /** @class */ (function (_super) {
                         return {
                             case_id: caseId,
                             status_id: testrail_interface_1.Status.Passed,
+                            elapsed: test.duration/1000 + "s",
                             comment: "Execution time: " + test.duration + "ms",
                         };
                     }
@@ -89,6 +90,7 @@ var CypressTestRailReporter = /** @class */ (function (_super) {
                     return {
                         case_id: caseId,
                         status_id: testrail_interface_1.Status.Failed,
+                        elapsed: test.duration/1000 + "s",
                         comment: customComment ? customComment + "\n\n# Cypress result: #\n " + test.err.message : "# Cypress result: #\n" + test.err.message,
                         defects: defectID
                     };
