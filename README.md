@@ -9,7 +9,7 @@ Publishes [Cypress](https://www.cypress.io/) runs on TestRail.
 ## Install
 
 ```shell
-$ npm i cypress-testrail-reporter-custom --save-dev
+$ npm i cypress-testrail-reporter-qa --save-dev
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ Add reporter to your `cypress.json`:
 
 ```json
 ...
-"reporter": "cypress-testrail-reporter-custom",
+"reporter": "cypress-testrail-reporter-qa",
 "reporterOptions": {
   "domain": "yourdomain.testrail.com",
   "username": "username",
