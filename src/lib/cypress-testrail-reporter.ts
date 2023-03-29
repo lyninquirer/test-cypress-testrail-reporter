@@ -60,7 +60,7 @@ export class CypressTestRailReporter extends reporters.Spec {
                         return {
                             case_id: caseId,
                             status_id: Status.Passed,
-                            estimate: test.duration/1000,
+                            elapsed: test.duration/1000 + "s",
                             comment: `Execution time: ${test.duration}ms`,
                         };
                     }
@@ -90,7 +90,7 @@ export class CypressTestRailReporter extends reporters.Spec {
                     return {
                         case_id: caseId,
                         status_id: Status.Failed,
-                        estimate: test.duration/1000,
+                        elapsed: test.duration/1000 + "s",
                         comment: customComment ? `${customComment}\n\n# Cypress result: #\n ${test.err.message}` : `# Cypress result: #\n${test.err.message}`,
                         defects: defectID
                     };
