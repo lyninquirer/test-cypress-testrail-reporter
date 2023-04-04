@@ -54,7 +54,13 @@ var TestRail = /** @class */ (function () {
     };
     TestRail.prototype.publishResults = function (results) {
         var _this = this;
-        if (this.options.createTestRun == "false") {
+        console.error("username: " + this.options.username);
+        console.error("password: " + this.options.password);
+        console.error("domain: " + this.options.domain);
+        console.error("projectId: " + this.options.projectId);
+        console.error("runId: " + this.options.runId);
+        console.error("createTestRun: " + this.options.createTestRun);
+        if (this.options.createTestRun == false) {
             this.runId = this.options.runId;
         }
         if (typeof this.runId === "undefined") {
@@ -82,7 +88,14 @@ var TestRail = /** @class */ (function () {
         }
     };
     TestRail.prototype.getCaseIds = function () {
-        if (this.options.createTestRun == "false") {
+        console.error("username: " + this.options.username);
+        console.error("password: " + this.options.password);
+        console.error("domain: " + this.options.domain);
+        console.error("projectId: " + this.options.projectId);
+        console.error("runId: " + this.options.runId);
+        console.error("createTestRun: " + this.options.createTestRun);
+
+        if (this.options.createTestRun == false) {
             this.runId = this.options.runId;
         }
         if (typeof this.runId === "undefined") {

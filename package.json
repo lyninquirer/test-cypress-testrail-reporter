@@ -1,6 +1,6 @@
 {
-  "name": "cypress-testrail-reporter-qa",
-  "version": "2.2.2",
+  "name": "test-cypress-testrail-reporter",
+  "version": "2.2.3",
   "description": "A Testrail reporter for cypress including TestRail API basic library",
   "main": "index.js",
   "private": false,
@@ -13,7 +13,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sarahphamEnc/hanoi-cypress-testrail-reporter.git"
+    "url": "git+https://github.com/lyninquirer/test-cypress-testrail-reporter.git"
   },
   "scripts": {
     "tsc": "tsc",
@@ -38,8 +38,8 @@
     "rimraf": "^2.6.3",
     "typescript": "^2.9.2"
   },
-  "homepage": "https://github.com/sarahphamEnc/hanoi-cypress-testrail-reporter#readme",
+  "homepage": "https://github.com/lyninquirer/test-cypress-testrail-reporter#readme",
   "bugs": {
-    "url": "https://github.com/sarahphamEnc/hanoi-cypress-testrail-reporter/issues"
+    "url": "https://github.com/lyninquirer/test-cypress-testrail-reporter/issues"
   }
 }
